@@ -1,0 +1,108 @@
+rules:
+  - rule_id: R01_cluster_top_small
+    name: "果房内の上部・小果の摘果"
+    priority: 80
+    applies_to: Fruit
+    when:
+      AND:
+        - is_cluster_member: true
+        - cluster_size: { operator: ">=", value: 3 }
+        - position_in_cluster: "TOP"
+        - ratio_to_cluster_mean_area: { operator: "<", value: 0.85 }
+    then:
+      action: THIN
+      ar_display: { color: "RED", label: "摘果（上部・小果）" }
+
+  - rule_id: R02_direct_flower_fruit
+    name: "無葉花果（直花果）の摘果"
+    priority: 90
+    applies_to: Fruit
+    when:
+      AND:
+        - is_direct_flower: true
+    then:
+      action: THIN
+      ar_display: { color: "RED", label: "摘果（直花果）" }
+
+  - rule_id: R03_july_outlier_huge
+    name: "飛び抜け大玉（す上がり予兆果）の摘果"
+    priority: 95
+    applies_to: Fruit
+    when:
+      AND:
+        - ratio_to_tree_mean_area: { operator: ">", value: 1.5 }
+    then:
+      action: THIN
+      ar_display: { color: "RED", label: "摘果（極重大玉・す上がりリスク）" }
+
+  - rule_id: R04_july_outlier_tiny
+    name: "極小果の早期摘果"
+    priority: 85
+    applies_to: Fruit
+    when:
+      AND:
+        - ratio_to_tree_mean_area: { operator: "<", value: 0.6 }
+    then:
+      action: THIN
+      ar_display: { color: "RED", label: "摘果（極小果）" }
+
+  - rule_id: R05_upward_fruit
+    name: "立ち枝・上向き果の日焼け防止摘果"
+    priority: 90
+    applies_to: Fruit
+    when:
+      AND:
+        - is_top_side: true
+        - orientation_angle: { operator: ">", value: 45 }
+    then:
+      action: THIN
+      ar_display: { color: "RED", label: "摘果（上向き果）" }
+
+  - rule_id: R06_elongated_fruit
+    name: "縦長異形果の摘果"
+    priority: 75
+    applies_to: Fruit
+    when:
+      AND:
+        - aspect_ratio: { operator: ">", value: 1.1 }
+    then:
+      action: THIN
+      ar_display: { color: "RED", label: "摘果（縦長果）" }
+
+  - rule_id: R07_defected_fruit
+    name: "傷果・病害虫被害果の最優先摘果"
+    priority: 100
+    applies_to: Fruit
+    when:
+      OR:
+        - has_wind_scar: true
+        - has_disease_spot: true
+        - has_pest_damage: true
+    then:
+      action: THIN
+      ar_display: { color: "RED", label: "摘果（障害果）" }
+
+  - rule_id: R08_bottom_skirt_fruit
+    name: "裾枝果実の泥跳ね・腐敗防止摘果"
+    priority: 85
+    applies_to: Fruit
+    when:
+      AND:
+        - ground_clearance: { operator: "<", value: 50 }
+    then:
+      action: THIN
+      ar_display: { color: "RED", label: "摘果（裾枝果）" }
+
+  - rule_id: R09_ideal_downward_fruit
+    name: "下垂有葉果の優先保護"
+    priority: 95
+    applies_to: Fruit
+    when:
+      AND:
+        - is_bottom_side: true
+        - is_leaf_associated: true
+        - aspect_ratio: { operator: "<", value: 0.85 }
+        - ratio_to_tree_mean_area: { operator: "BETWEEN", min: 0.8, max: 1.2 }
+    then:
+      action: KEEP
+      ar_display: { color: "GREEN", label: "保護（優良果）" }
